@@ -78,6 +78,31 @@ app.put('/shopping-list/:id', jsonParser, (req, res) => {
   res.status(204).json(updatedItem);
 });
 
+app.put('/recipes/:id', jsonParser, (req, res) => {
+  const requiredFields = ['name', 'ingredients', 'id'];
+  for (let i = 0; i < requiredFields.length; i++) {
+    const field = requiredFields[i];
+    if(!(field in req.body)){
+      const message = `Missing ${field} in request body`
+      console.log(message);
+      return res.status(400).send(message);
+    }
+  }
+  if (req.params.id !== req.body.id) {
+    const message = 'request path messed up'
+      console.error(message);
+      return res.status(400).send(message);
+    
+  }
+  console.log(`updating recipe`)
+  const updatedItem = Recipes.update({
+    id: req.params.id,
+    name: req.body.name,
+    ingredients: req.body.ingredients,
+  });
+  res.status(204).json(updatedItem);
+});
+
 // when DELETE request comes in with an id in path,
 // try to delete that item from ShoppingList.
 app.delete('/shopping-list/:id', (req, res) => {
